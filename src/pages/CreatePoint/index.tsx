@@ -1,11 +1,13 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { LeafletMouseEvent } from 'leaflet';
 import { Map, TileLayer, Marker } from 'react-leaflet';
 
 import axios from 'axios';
 import api from '../../services/api';
+
+import Modal from '../../components/Modal';
 
 import logoEcoleta from '../../assets/images/logo.svg';
 import './styles.css';
@@ -54,6 +56,8 @@ const CreatePoint: React.FC = () => {
     0,
     0,
   ]);
+
+  const history = useHistory();
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -136,6 +140,8 @@ const CreatePoint: React.FC = () => {
     await api.post('points', data);
 
     alert('Ponto de coleta cadastrado com sucesso!');
+
+    history.push('/');
   }
 
   useEffect(() => {
@@ -202,6 +208,7 @@ const CreatePoint: React.FC = () => {
 
   return (
     <div id="page-create-point">
+      <Modal />
       <header>
         <img src={logoEcoleta} alt="Ecoleta" />
 
