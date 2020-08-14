@@ -75,15 +75,36 @@
   margin-bottom: 24px;
 }
 
+#page-create-point form .group-cep .field:first-child {
+  max-width: 150px;
+}
+
+#page-create-point form .group-address .field:nth-child(2) {
+  max-width: 100px;
+}
+
+#page-create-point form .group-address .field:nth-child(3) {
+  width: 150px;
+}
+
 #page-create-point form .field input[type=text], #page-create-point form .field input[type=email], #page-create-point form .field input[type=number] {
   flex: 1;
   background: #F0F0F5;
+  width: 100%;
   border-radius: 8px;
   border: 0;
   padding: 16px 24px;
   margin-top: 8px;
   font-size: 16px;
   color: #6C6C80;
+}
+
+#page-create-point form .field input[type=number],
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: none;
 }
 
 #page-create-point form .field select {
