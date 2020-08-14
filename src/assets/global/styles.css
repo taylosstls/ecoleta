@@ -8,7 +8,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  outline: none;
+  outline: none !important;
 }
 
 body {
@@ -24,4 +24,12 @@ body, input, button {
 h1, h2, h3, h4, h5, h6 {
   color: var(--title-color);
   font-family: Ubuntu;
+}
+
+.modal-backdrop {
+  background-color: #150f1c;
+}
+
+.modal-backdrop.show {
+  opacity: .9;
 }

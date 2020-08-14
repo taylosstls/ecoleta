@@ -1,16 +1,16 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
+import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 import { LeafletMouseEvent } from 'leaflet';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+import { Modal } from 'react-bootstrap';
 
 import axios from 'axios';
 import api from '../../services/api';
 
-import Modal from '../../components/Modal';
-
 import logoEcoleta from '../../assets/images/logo.svg';
 import './styles.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface ItemProps {
   id: number;
@@ -32,6 +32,10 @@ interface CEPProps {
 }
 
 const CreatePoint: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const [items, setItems] = useState<ItemProps[]>([]);
   const [ufs, setUfs] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
@@ -50,6 +54,7 @@ const CreatePoint: React.FC = () => {
 
   const [selectedUf, setSelectedUf] = useState('0');
   const [selectedCity, setSelectedCity] = useState('0');
+  const [disabledSubmit, setDisabledSubmit] = useState(true);
   const [disabled, setDisabled] = useState(true);
 
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([
@@ -136,12 +141,13 @@ const CreatePoint: React.FC = () => {
       items: itemsRecicly,
     };
 
-    //    console.log(data);
     await api.post('points', data);
 
-    alert('Ponto de coleta cadastrado com sucesso!');
+    handleShow();
 
-    history.push('/');
+    setTimeout(() => {
+      history.push('/');
+    }, 2000);
   }
 
   useEffect(() => {
@@ -206,9 +212,33 @@ const CreatePoint: React.FC = () => {
     setDisabled(false);
   }, [selectedUf]);
 
+  useEffect(() => {
+    if (
+      formData.name === '' ||
+      formData.email === '' ||
+      formData.whatsapp === ''
+    ) {
+      setDisabledSubmit(false);
+    } else {
+      setDisabledSubmit(false);
+    }
+  }, [formData.name, formData.email, formData.whatsapp]);
+
   return (
     <div id="page-create-point">
-      <Modal />
+      <Modal
+        className="modal-color"
+        show={show}
+        size="lg"
+        onHide={handleClose}
+        centered
+      >
+        <Modal.Body>
+          <FiCheckCircle size={60} color="#34CB79" />
+          Cadastro concluído!
+        </Modal.Body>
+      </Modal>
+
       <header>
         <img src={logoEcoleta} alt="Ecoleta" />
 
@@ -418,7 +448,9 @@ const CreatePoint: React.FC = () => {
           </ul>
         </fieldset>
 
-        <button type="submit">Cadastrar ponto de coleta</button>
+        <button type="submit" disabled={disabledSubmit}>
+          Cadastrar ponto de coleta
+        </button>
       </form>
     </div>
   );
