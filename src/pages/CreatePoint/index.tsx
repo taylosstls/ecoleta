@@ -6,6 +6,7 @@ import { Map, TileLayer, Marker } from 'react-leaflet';
 import { Modal } from 'react-bootstrap';
 
 import axios from 'axios';
+import Dropzone from '../../components/Dropzone';
 import api from '../../services/api';
 
 import logoEcoleta from '../../assets/images/logo.svg';
@@ -36,7 +37,7 @@ const CreatePoint: React.FC = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [items, setItems] = useState<ItemProps[]>([]);
+  const [itemsList, setItemsList] = useState<ItemProps[]>([]);
   const [ufs, setUfs] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [selectedCEP, setSelectedCEP] = useState('');
@@ -51,6 +52,7 @@ const CreatePoint: React.FC = () => {
     number: '',
     complement: '',
   });
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const [selectedUf, setSelectedUf] = useState('0');
   const [selectedCity, setSelectedCity] = useState('0');
@@ -123,23 +125,27 @@ const CreatePoint: React.FC = () => {
     const city = selectedCity;
     const [latitude, longitude] = selectedPosition;
     const zipcode = selectedCEP;
-    const itemsRecicly = selectedItems;
+    const items = selectedItems;
 
-    const data = {
-      name,
-      email,
-      whatsapp,
-      latitude,
-      longitude,
-      zipcode,
-      address,
-      neighborhood,
-      number,
-      complement,
-      city,
-      uf,
-      items: itemsRecicly,
-    };
+    const data = new FormData();
+
+    data.append('name', name);
+    data.append('email', email);
+    data.append('whatsapp', whatsapp);
+    data.append('latitude', String(latitude));
+    data.append('longitude', String(longitude));
+    data.append('zipcode', zipcode);
+    data.append('address', address);
+    data.append('neighborhood', neighborhood);
+    data.append('number', number);
+    data.append('complement', complement);
+    data.append('city', city);
+    data.append('uf', uf);
+    data.append('items', items.join(','));
+
+    if (selectedFile) {
+      data.append('image', selectedFile);
+    }
 
     await api.post('points', data);
 
@@ -178,7 +184,7 @@ const CreatePoint: React.FC = () => {
 
   useEffect(() => {
     api.get('items').then((response) => {
-      setItems(response.data);
+      setItemsList(response.data);
     });
   }, []);
 
@@ -218,9 +224,9 @@ const CreatePoint: React.FC = () => {
       formData.email === '' ||
       formData.whatsapp === ''
     ) {
-      setDisabledSubmit(false);
-    } else {
       setDisabledSubmit(true);
+    } else {
+      setDisabledSubmit(false);
     }
   }, [formData.name, formData.email, formData.whatsapp]);
 
@@ -254,6 +260,8 @@ const CreatePoint: React.FC = () => {
           <br />
           ponto de coleta
         </h1>
+
+        <Dropzone onFileUploaded={setSelectedFile} />
 
         <fieldset>
           <legend>
@@ -432,7 +440,7 @@ const CreatePoint: React.FC = () => {
           </legend>
 
           <ul className="items-grid">
-            {items.map((item) => (
+            {itemsList.map((item) => (
               <li
                 key={item.id}
                 onClick={() => {
