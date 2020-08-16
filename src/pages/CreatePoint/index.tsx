@@ -220,7 +220,7 @@ const CreatePoint: React.FC = () => {
     ) {
       setDisabledSubmit(false);
     } else {
-      setDisabledSubmit(false);
+      setDisabledSubmit(true);
     }
   }, [formData.name, formData.email, formData.whatsapp]);
 
